@@ -19,7 +19,6 @@ namespace LBPUnion.ProjectLighthouse.Servers.GameServer.Controllers.Resources;
 [Route("LITTLEBIGPLANETPS3_XML")]
 public class ResourcesController : ControllerBase
 {
-
     [HttpPost("showModerated")]
     public IActionResult ShowModerated() => this.Ok(new ResourceList());
 
@@ -36,18 +35,18 @@ public class ResourcesController : ControllerBase
     }
 
     [HttpGet("r/{hash}")]
-    public IActionResult GetResource(string hash)
+    public Task<IActionResult> GetResource(string hash)
     {
         string path = FileHelper.GetResourcePath(hash);
 
         string fullPath = Path.GetFullPath(path);
 
         // Prevent directory traversal attacks
-        if (!fullPath.StartsWith(FileHelper.FullResourcePath)) return this.BadRequest();
+        if (!fullPath.StartsWith(FileHelper.FullResourcePath)) return Task.FromResult<IActionResult>(this.BadRequest());
 
-        if (FileHelper.ResourceExists(hash)) return this.File(IOFile.OpenRead(path), "application/octet-stream");
+        if (FileHelper.ResourceExists(hash)) return Task.FromResult<IActionResult>(this.File(IOFile.OpenRead(path), "application/octet-stream"));
 
-        return this.NotFound();
+        return Task.FromResult<IActionResult>(this.NotFound());
     }
 
     [HttpPost("upload/{hash}/unattributed")]
