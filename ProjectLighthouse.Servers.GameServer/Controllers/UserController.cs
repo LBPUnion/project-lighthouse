@@ -36,11 +36,11 @@ public class UserController : ControllerBase
 
     [HttpGet("user/{username}")]
     public async Task<IActionResult> GetUser(string username)
-    {
-        UserEntity? user = await this.database.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (user == null) return this.NotFound();
+    { 
+        UserEntity? targetUser = await this.database.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (targetUser == null) return this.NotFound();
 
-        return this.Ok(GameUser.CreateFromEntity(user, this.GetToken().GameVersion));
+        return this.Ok(GameUser.CreateFromEntity(targetUser, this.GetToken().GameVersion));
     }
 
     [HttpGet("users")]
